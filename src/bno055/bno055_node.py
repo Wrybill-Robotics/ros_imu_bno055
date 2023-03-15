@@ -44,6 +44,7 @@ from bno055.registers import *
 from sensor_msgs.msg import Imu
 from sensor_msgs.msg import Temperature
 from sensor_msgs.msg import MagneticField
+from geometry_msgs.msg import Vector3
 from std_srvs.srv import Empty, EmptyResponse
 from std_srvs.srv import Trigger, TriggerResponse 
 
@@ -72,6 +73,7 @@ class BNO055Node:
 
         # Create topics
         self.pub_imu_data = rospy.Publisher('imu/data', Imu, queue_size=1)
+        self.pub_euler = rospy.Publisher('imu/rpy', Vector3, queue_size=1)
 
         if self.use_magnetometer == True:
             self.pub_imu_magnetometer = rospy.Publisher('imu/magnetometer', MagneticField, queue_size=1)
@@ -136,7 +138,7 @@ class BNO055Node:
         # Set IMU units
         status_2 = self.bno055.set_imu_units( acceleration_units = METERS_PER_SECOND,   # Linear acceleration units
                                             angular_velocity_units = RAD_PER_SECOND,  # Anguar velocity units  
-                                            euler_orientation_units = RAD,            # Euler orientation units
+                                            euler_orientation_units = DEG,            # Euler orientation units
                                             temperature_units = CELSIUS,              # Temperature units
                                             orientation_mode = WINDOWS_ORIENTATION    # Orientation mode
                                            )
@@ -336,6 +338,16 @@ class BNO055Node:
         self.imu_temperature_seq_counter=+1
 
         self.pub_imu_temperature.publish(imu_temperature)
+    
+    def publish_euler(self):
+
+        euler_vector = Vector3()
+        rpy=self.bno055.get_euler_orientation()
+        euler_vector.x = rpy[2] #roll
+        euler_vector.y = rpy[1] #pitch
+        euler_vector.z = rpy[0] #yaw
+
+        self.pub_euler.publish(euler_vector)
 
     def run(self):
 
@@ -358,6 +370,7 @@ class BNO055Node:
 
                 # Publish imu data
                 self.publish_imu_data()
+                self.publish_euler()
    
                 # Publish magnetometer data
                 if self.use_magnetometer == True:
