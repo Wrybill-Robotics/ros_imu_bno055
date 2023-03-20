@@ -38,6 +38,7 @@ Author:  Robert Vasquez Zavaleta
 """
 import rospy
 import os
+import time
 from bno055.bno055 import BNO055
 from bno055.registers import *
 
