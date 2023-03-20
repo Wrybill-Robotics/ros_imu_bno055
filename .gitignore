@@ -1,1 +1,4 @@
 **__pycache__
+
+src/bno055/calibration/
+src/bno055/*_calibration
