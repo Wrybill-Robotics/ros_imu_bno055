@@ -21,6 +21,6 @@
         <param name="use_temperature" value="$(arg use_temperature)" />    
     </node>
 
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ros_imu_bno055)/utils/view_imu_rviz.rviz" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find bno055)/utils/view_imu_rviz.rviz" />
 
 </launch>
